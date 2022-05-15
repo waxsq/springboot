@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingge.springboot.mapper.RecordMapper">
+
+    <update id="modifyRecord">
+        update w_record set status = '1' where seatkeyword like concat('%',#{time},'%')
+    </update>
+
+<!--        @Select("select * from w_record where u_id = #{uId} and status = '0'
+and seatkeyword not like '%'#{sDate}'%'")-->
+    <select id="getExsitRecord" resultType="integer">
+        select count(*) from w_record
+        where u_id = #{uId}
+        and status = '0'
+        and seatkeyword  like concat('%', #{sDate} ,'%')
+    </select>
+
+
+</mapper>

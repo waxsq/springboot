@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingge.springboot.mapper.UserMapper">
+
+    <select id="queryUser" resultType="com.qingge.springboot.entity.User">
+        select * from s_user where username = #{user.username}
+    </select>
+
+    <select id="findPage" resultType="com.qingge.springboot.entity.User">
+        select u_id ,username,create_time,role,email,phone,u_number
+        from s_user
+        <where>
+            <if test="username != null and username != ''">
+                and username like concat('%', #{username} ,'%')
+            </if>
+            <if test="email != null and email != ''">
+                and email like concat('%', #{email} ,'%')
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone like concat('%', #{phone} ,'%')
+            </if>
+        </where>
+        order by role
+    </select>
+    <select id="selectUserByConditon" resultType="com.qingge.springboot.entity.User">
+        select username,create_time,r.name,email,phone
+        from s_user u
+        left join s_role r
+        on  u.role = r.flag
+        <where>
+            <if test="username != null and username != ''">
+                and username like concat('%', #{username} ,'%')
+            </if>
+            <if test="email != null and email != ''">
+                and email like concat('%', #{email} ,'%')
+            </if>
+
+            <if test="ids != null">
+
+            or u_id in  (
+                <foreach collection="ids" index="index" item="item" separator=",">
+                         #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </select>
+
+
+
+    <resultMap id="getStudentScoreForPageByConditionMap" type="com.qingge.springboot.entity.User">
+        <id property="uId" column="u_id"></id>
+        <result property="username" column="username"></result>
+        <result property="uNumber" column="u_number"></result>
+        <result property="role" column="role"></result>
+        <result property="score" column="score"></result>
+        <collection property="rewardPunishmentList" ofType="com.qingge.springboot.entity.RewardPunishment">
+            <id property="rpId" column="rp_id"></id>
+            <result property="datatime" column="datatime"></result>
+            <result property="situation" column="situation"></result>
+            <result property="uId" column="u_id"></result>
+            <result property="rpScore" column="rp_score"></result>
+        </collection>
+    </resultMap>
+
+    <select id="getStudentScoreForPageByCondition" resultMap="getStudentScoreForPageByConditionMap">
+        select s.u_id,username,role,score,datatime,situation,u_number,rp_score,rp_id
+        from s_user s left join w_reward_punishment w
+        on s.u_id = w.u_id
+        <where>
+                role = 'ROLE_USER'
+            <if test="uNumber != null and uNumber != ''">
+                and  u_number like  concat('%', #{uNumber} ,'%')
+            </if>
+            <if test="username != null and username != ''">
+                and  username like  concat('%', #{username} ,'%')
+            </if>
+
+        </where>
+    </select>
+    <select id="getInfo" resultType="java.util.Map">
+        select password,secret_key
+        from s_user
+        where username = #{username}
+    </select>
+    <!--    @Select("select password from s_user where u_id = #{id}")-->
+    <select id="selectUserByUIdForPwd" resultType="java.util.Map">
+        select password,secret_key
+        from s_user
+        where u_id = #{id}
+    </select>
+
+
+
+
+</mapper>

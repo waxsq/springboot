@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingge.springboot.mapper.ClassroomTypeMapper">
+
+
+    <select id="getPage" resultType="com.qingge.springboot.entity.ClassroomType">
+        select  * from w_classroom_type
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat('%', #{name} ,'%')
+            </if>
+            <if test="score != null and score != ''">
+                and score = score
+            </if>
+        </where>
+        order by name asc
+    </select>
+</mapper>

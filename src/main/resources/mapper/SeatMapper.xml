@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingge.springboot.mapper.SeatMapper">
+    <update id="modifySeatUId">
+        update w_seat set u_id = '0' , s_status = '1' where keyword like concat('%', #{s} ,'%')
+    </update>
+
+    <delete id="removeSeatByYesterday">
+        delete from w_seat where keyword  like concat('%', #{s} ,'%')
+    </delete>
+
+
+    <select id="getAllSeatForPageByCondition" resultType="com.qingge.springboot.entity.Seat">
+        select  distinct time,c_name ,date
+        from w_seat s left join w_classroom c
+        on s.c_id = c.c_id
+        <where>
+            <if test="date != null and '' != date">
+                and date like concat('%', #{date} ,'%')
+            </if>
+            <if test="time != null and '' != time">
+                and time like concat('%', #{time} ,'%')
+            </if>
+            <if test="cname != null and '' != cname">
+                and c_name like concat('%', #{cname} ,'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getFreeSeatByCondition" resultType="java.lang.Integer">
+        select  count(*)
+        from w_seat s join  w_classroom c
+        on s.c_id = c.c_id
+        where date = #{sDate} and time = #{stime} and c.c_name =#{sCName} and s_status ='1'
+    </select>
+</mapper>
